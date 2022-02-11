@@ -2,40 +2,45 @@ import java.util.Scanner;
 
 public class Main {
 
-    final static String ERROR_OUTPUT = "This number is not natural!";
-    final static String ENTER_INPUT = "Enter a natural number:";
-    final static String OUTPUT_LINE_1 = "Properties of ";
+    final static String WELCOME_1 = "Welcome to Amazing Numbers!\n";
+    final static String WELCOME_2 = "Supported requests:";
+    final static String WELCOME_3 = "- enter a natural number to know its properties;";
+    final static String WELCOME_4 = "- enter 0 to exit.\n";
+    final static String ENTER_INPUT = "Enter a request:";
+    final static String ERROR_OUTPUT = "\nThe first parameter should be a natural number or zero.\n";
+    final static String OUTPUT_LINE_1 = "\nProperties of ";
     final static String OUTPUT_LINE_2 = "        even: ";
     final static String OUTPUT_LINE_3 = "         odd: ";
     final static String OUTPUT_LINE_4 = "        buzz: ";
     final static String OUTPUT_LINE_5 = "        duck: ";
-
+    final static String OUTPUT_LINE_6 = " palindromic: ";
+    final static String OUTPUT_GOODBYE = "\nGoodbye!";
 
     static Scanner scanner = new Scanner(System.in);
 
-    public static boolean isANaturalNumber(int input) {
+    public static boolean isANaturalNumber(long input) {
         return input > 0;
     }
 
-    public static boolean isEven(int input) {
+    public static boolean isEven(long input) {
         return 0 == input % 2;
     }
 
-    public static boolean isDivisibleBySeven(int input) {
+    public static boolean isDivisibleBySeven(long input) {
         return 0 == input % 7;
     }
 
-    public static boolean endsWithSeven(int input) {
+    public static boolean endsWithSeven(long input) {
         return 7 == input % 10;
     }
 
-    public static boolean isBuzz(int input) {
+    public static boolean isBuzz(long input) {
         boolean isDivisibleBySeven = isDivisibleBySeven(input);
         boolean endsWithSeven = endsWithSeven(input);
         return isDivisibleBySeven || endsWithSeven;
     }
 
-    public static boolean isDuck(int input) {
+    public static boolean isDuck(long input) {
         if (input % 10 == 0) {
             return true;
         } else if (input - input % 10 == 0 ){
@@ -45,22 +50,48 @@ public class Main {
         }
     }
 
-    public static void buzzNumbers() {
-        System.out.println(ENTER_INPUT);
-        int input = scanner.nextInt();
-        if(!isANaturalNumber(input)) {
-            System.out.println(ERROR_OUTPUT);
-        } else {
-            System.out.println(OUTPUT_LINE_1 + input);
+    public static boolean isPalindrome(long input) {
+        long reversedNum = 0;
+        long remainder;
+        long originalNum = input;
+        while (input != 0) {
+            remainder = input % 10;
+            reversedNum = reversedNum * 10 + remainder;
+            input /= 10;
+        }
+        return originalNum == reversedNum;
+    }
+
+    public static void output(long input) {
+            System.out.printf(OUTPUT_LINE_1 +"%,d\n", input);
             System.out.println(OUTPUT_LINE_2 + isEven(input));
             System.out.println(OUTPUT_LINE_3 + !isEven(input));
             System.out.println(OUTPUT_LINE_4 + isBuzz(input));
             System.out.println(OUTPUT_LINE_5 + isDuck(input));
+            System.out.println(OUTPUT_LINE_6 + isPalindrome(input) + "\n");
+    }
+
+    public static void menu() {
+        System.out.println(WELCOME_1);
+        System.out.println(WELCOME_2);
+        System.out.println(WELCOME_3);
+        System.out.println(WELCOME_4);
+        while (true) {
+            System.out.println(ENTER_INPUT);
+            long input = scanner.nextLong();
+            if (input == 0) {
+                System.out.println(OUTPUT_GOODBYE);
+                break;
+            } else if (!isANaturalNumber(input)) {
+                System.out.println(ERROR_OUTPUT);
+            } else {
+                output(input);
+            }
         }
     }
 
     public static void main(String[] args) {
-        buzzNumbers();
+        menu();
     }
 }
 
