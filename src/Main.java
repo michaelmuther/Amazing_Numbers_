@@ -5,16 +5,30 @@ public class Main {
     final static String WELCOME_1 = "Welcome to Amazing Numbers!\n";
     final static String WELCOME_2 = "Supported requests:";
     final static String WELCOME_3 = "- enter a natural number to know its properties;";
-    final static String WELCOME_4 = "- enter 0 to exit.\n";
+    final static String WELCOME_4 = "- enter two natural numbers to obtain the properties of the list:";
+    final static String WELCOME_5 = "  * the first parameter represents a starting number;";
+    final static String WELCOME_6 = "  * the second parameter shows how many consecutive numbers are to be processed;";
+    final static String WELCOME_7 = "- separate the parameters with one space;";
+    final static String WELCOME_8 = "- enter 0 to exit.\n";
     final static String ENTER_INPUT = "Enter a request:";
-    final static String ERROR_OUTPUT = "\nThe first parameter should be a natural number or zero.\n";
+    final static String ERROR_OUTPUT_1 = "\nThe first parameter should be a natural number or zero.\n";
+    final static String ERROR_OUTPUT_2 = "\nThe second parameter should be a natural number.\n";
     final static String OUTPUT_LINE_1 = "\nProperties of ";
     final static String OUTPUT_LINE_2 = "        even: ";
     final static String OUTPUT_LINE_3 = "         odd: ";
     final static String OUTPUT_LINE_4 = "        buzz: ";
     final static String OUTPUT_LINE_5 = "        duck: ";
-    final static String OUTPUT_LINE_6 = " palindromic: ";
+    final static String OUTPUT_LINE_6 = "      gapful: ";
+    final static String OUTPUT_LINE_7 = " palindromic: ";
     final static String OUTPUT_GOODBYE = "\nGoodbye!";
+    final static String IS = " is ";
+    final static String BUZZ = "buzz";
+    final static String DUCK = "duck";
+    final static String EVEN = "even";
+    final static String ODD = "odd";
+    final static String GAPFUL = "gapful";
+    final static String PALINDROME = "palindromic";
+    final static String COMMA_SPACE = ", ";
 
     static Scanner scanner = new Scanner(System.in);
 
@@ -26,10 +40,12 @@ public class Main {
         return 0 == input % 2;
     }
 
+    // helper for isBuzz
     public static boolean isDivisibleBySeven(long input) {
         return 0 == input % 7;
     }
 
+    // helper for isBuzz
     public static boolean endsWithSeven(long input) {
         return 7 == input % 10;
     }
@@ -62,30 +78,103 @@ public class Main {
         return originalNum == reversedNum;
     }
 
-    public static void output(long input) {
+    public static boolean isGapful(long input) {
+        if (input < 100) {
+            return false;
+        } else {
+            long last = input % 10;
+            long first = firstDigit(input);
+            long firstLast = first * 10 + last;
+            return input % firstLast == 0;
+        }
+    }
+
+    // Helper function for isGapful(), returns the first digit of a long
+    public static long firstDigit(long input) {
+        long digits = digitCount(input);
+        long divisor = (long) Math.pow(10, digits - 1);
+        return input / divisor;
+    }
+
+    // Helper function for firstDigit() which is a helper for isGapful(), returns the count of the digits in the long
+    public static long digitCount(long input) {
+        int digits = 0;
+        while (input != 0) {
+            input /= 10;
+            digits++;
+        }
+        return digits;
+    }
+
+    public static void outputSingle(long input) {
             System.out.printf(OUTPUT_LINE_1 +"%,d\n", input);
             System.out.println(OUTPUT_LINE_2 + isEven(input));
             System.out.println(OUTPUT_LINE_3 + !isEven(input));
             System.out.println(OUTPUT_LINE_4 + isBuzz(input));
             System.out.println(OUTPUT_LINE_5 + isDuck(input));
-            System.out.println(OUTPUT_LINE_6 + isPalindrome(input) + "\n");
+            System.out.println(OUTPUT_LINE_6 + isGapful(input));
+            System.out.println(OUTPUT_LINE_7 + isPalindrome(input) + "\n");
     }
 
-    public static void menu() {
+    // single line output format for group of numbers (Stage 4)
+    public static void outputMultiple(long input, long reps) {
+        for (long i = input; i < input + reps; i++) {
+            System.out.print("             " + i + IS);
+            if (isEven(i)) {
+                System.out.print(EVEN);
+            } else {
+                System.out.print(ODD);
+            }
+            if (isBuzz(i)) {
+                System.out.print(COMMA_SPACE + BUZZ);
+            }
+            if (isDuck(i)) {
+                System.out.print(COMMA_SPACE + DUCK);
+            }
+            if (isPalindrome(i)) {
+                System.out.print(COMMA_SPACE + PALINDROME);
+            }
+            if (isGapful(i)) {
+                System.out.print(COMMA_SPACE + GAPFUL);
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void menu() { // UPDATE FOR STAGE 4
         System.out.println(WELCOME_1);
         System.out.println(WELCOME_2);
         System.out.println(WELCOME_3);
         System.out.println(WELCOME_4);
+        System.out.println(WELCOME_5);
+        System.out.println(WELCOME_6);
+        System.out.println(WELCOME_7);
+        System.out.println(WELCOME_8);
         while (true) {
             System.out.println(ENTER_INPUT);
-            long input = scanner.nextLong();
-            if (input == 0) {
-                System.out.println(OUTPUT_GOODBYE);
-                break;
-            } else if (!isANaturalNumber(input)) {
-                System.out.println(ERROR_OUTPUT);
-            } else {
-                output(input);
+            String input = scanner.nextLine();
+            String[] inputArray = input.split(" ");
+            if (inputArray.length == 1) {
+                Long inputLong = Long.parseLong(inputArray[0]);
+                if (inputLong == 0) {
+                    System.out.println(OUTPUT_GOODBYE);
+                    break;
+                } else if (!isANaturalNumber(inputLong)) {
+                    System.out.println(ERROR_OUTPUT_1);
+                } else {
+                    outputSingle(inputLong);
+                }
+            } else { // assumes there will only be two entries
+                Long inputLongOne = Long.parseLong(inputArray[0]);
+                Long inputLongTwo = Long.parseLong(inputArray[1]);
+                if (!isANaturalNumber(inputLongOne)) {
+                    System.out.println(ERROR_OUTPUT_1);
+                } else if (!isANaturalNumber(inputLongTwo)) {
+                    System.out.println(ERROR_OUTPUT_2);
+                } else {
+                    outputMultiple(inputLongOne, inputLongTwo);
+                }
             }
         }
     }
