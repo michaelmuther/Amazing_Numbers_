@@ -9,13 +9,17 @@ public class Main {
     final static String WELCOME_5 = "  * the first parameter represents a starting number;";
     final static String WELCOME_6 = "  * the second parameter shows how many consecutive numbers are to be processed;";
     final static String WELCOME_7 = "- two natural numbers and a property to search for;";
-    final static String WELCOME_8 = "- separate the parameters with one space;";
-    final static String WELCOME_9 = "- enter 0 to exit.\n";
+    final static String WELCOME_8 = "- two natural numbers and two properties to search for;";
+    final static String WELCOME_9 = "- separate the parameters with one space;";
+    final static String WELCOME_10 = "- enter 0 to exit.\n";
     final static String ENTER_INPUT = "Enter a request:";
     final static String ERROR_OUTPUT_1 = "\nThe first parameter should be a natural number or zero.\n";
     final static String ERROR_OUTPUT_2 = "\nThe second parameter should be a natural number.\n";
-    final static String ERROR_OUTPUT_3 = "\nThe property %s is wrong.\n"; // UPDATE THIS WITH printF
-    final static String ERROR_OUTPUT_4 = "Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY]\n";
+    final static String ERROR_OUTPUT_3 = "\nThe property %s is wrong.\n";
+    final static String ERROR_OUTPUT_4 = "\nThe properties %s, %s are wrong.\n";
+    final static String ERROR_OUTPUT_5 = "Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY, SQUARE, SUNNY]\n";
+    final static String ERROR_OUTPUT_6 = "The request contains mutually exclusive properties: %s, %s\n";
+    final static String ERROR_OUTPUT_7 = "There are no numbers with these properties.\n";
     final static String OUTPUT_LINE_1 = "\nProperties of ";
     final static String OUTPUT_LINE_2 = "        even: ";
     final static String OUTPUT_LINE_3 = "         odd: ";
@@ -24,6 +28,8 @@ public class Main {
     final static String OUTPUT_LINE_6 = "      gapful: ";
     final static String OUTPUT_LINE_7 = " palindromic: ";
     final static String OUTPUT_LINE_8 = "         spy: ";
+    final static String OUTPUT_LINE_9 = "       sunny: ";
+    final static String OUTPUT_LINE_10 = "      square: ";
     final static String OUTPUT_GOODBYE = "\nGoodbye!";
     final static String IS = " is ";
     final static String BUZZ = "buzz";
@@ -33,6 +39,8 @@ public class Main {
     final static String GAPFUL = "gapful";
     final static String PALINDROME = "palindromic";
     final static String SPY = "spy";
+    final static String SUNNY = "sunny";
+    final static String SQUARE = "square";
     final static String COMMA_SPACE = ", ";
 
     static Scanner scanner = new Scanner(System.in);
@@ -119,6 +127,15 @@ public class Main {
         return multiplication == addition;
     }
 
+    public static boolean isSquare(long input) {
+        double sqrt = Math.sqrt(input);
+        return ((sqrt - Math.floor(sqrt)) == 0);
+    }
+
+    public static boolean isSunny(long input) {
+        return isSquare(input + 1);
+    }
+
     public static void outputSingle(long input) {
             System.out.printf(OUTPUT_LINE_1 +"%,d\n", input);
             System.out.println(OUTPUT_LINE_2 + isEven(input));
@@ -127,7 +144,9 @@ public class Main {
             System.out.println(OUTPUT_LINE_5 + isDuck(input));
             System.out.println(OUTPUT_LINE_6 + isGapful(input));
             System.out.println(OUTPUT_LINE_7 + isPalindrome(input));
-            System.out.println(OUTPUT_LINE_8 + isSpy(input) + "\n");
+            System.out.println(OUTPUT_LINE_8 + isSpy(input));
+            System.out.println(OUTPUT_LINE_9 + isSunny(input));
+            System.out.println(OUTPUT_LINE_10 + isSquare(input) + "\n");
     }
 
     // single line output format for group of numbers (Stage 4)
@@ -160,49 +179,56 @@ public class Main {
         if (isSpy(input)) {
             System.out.print(COMMA_SPACE + SPY);
         }
+        if (isSunny(input)) {
+            System.out.print(COMMA_SPACE + SUNNY);
+        }
+        if (isSquare(input)) {
+            System.out.print(COMMA_SPACE + SQUARE);
+        }
         System.out.println();
     }
 
-    // "Available properties: [EVEN, ODD, BUZZ, DUCK, PALINDROMIC, GAPFUL, SPY]\n";
+    public static boolean isProperty(long input, String property) {
+        switch (property) {
+            case EVEN:
+                return (isEven(input));
+            case ODD:
+                return (!isEven(input));
+            case BUZZ:
+                return (isBuzz(input));
+            case DUCK:
+                return (isDuck(input));
+            case PALINDROME:
+                return (isPalindrome(input));
+            case GAPFUL:
+                return (isGapful(input));
+            case SPY:
+                return (isSpy(input));
+            case SUNNY:
+                return (isSunny(input));
+            case SQUARE:
+                return (isSquare(input));
+        }
+        return false;
+    }
+
+    public static void outputWithTwoSearchProperties(long input, long reps, String propertyOne, String propertyTwo) {
+        int count = 0;
+        for (long i = input; count < reps; i++) {
+            if (isProperty(i, propertyOne) && isProperty(i, propertyTwo)) {
+                outputSingleOfMultiple(i);
+                count++;
+            }
+        }
+        System.out.println();
+    }
+
     public static void outputWithSearchProperty(long input, long reps, String property) {
         int count = 0;
         for (long i = input; count < reps; i++) {
-            switch (property) {
-                case EVEN: if(isEven(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case ODD: if(!isEven(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case BUZZ: if(isBuzz(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case DUCK: if(isDuck(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case PALINDROME: if(isPalindrome(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case GAPFUL: if(isGapful(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
-                case SPY: if(isSpy(i)) {
-                    outputSingleOfMultiple(i);
-                    count++;
-                }
-                    break;
+            if (isProperty(i, property)) {
+                outputSingleOfMultiple(i);
+                count++;
             }
         }
         System.out.println();
@@ -215,7 +241,7 @@ public class Main {
 
     // Helper for user input validation
     public static boolean isValidProperty(String input) {
-        String[] test = {EVEN, ODD, BUZZ, DUCK, PALINDROME, GAPFUL, SPY};
+        String[] test = {EVEN, ODD, BUZZ, DUCK, PALINDROME, GAPFUL, SPY, SUNNY, SQUARE};
         for (String testString : test) {
             if (testString.equalsIgnoreCase(input)) {
                 return true;
@@ -234,6 +260,7 @@ public class Main {
         System.out.println(WELCOME_7);
         System.out.println(WELCOME_8);
         System.out.println(WELCOME_9);
+        System.out.println(WELCOME_10);
         while (true) {
             System.out.println(ENTER_INPUT);
             String input = scanner.nextLine();
@@ -268,10 +295,39 @@ public class Main {
                     System.out.println(ERROR_OUTPUT_2);
                 } else if (!isValidProperty(inputProperty) ) {
                     System.out.printf(ERROR_OUTPUT_3, inputProperty);
-                    System.out.println(ERROR_OUTPUT_4);
+                    System.out.println(ERROR_OUTPUT_5);
                 } else {
                     outputWithSearchProperty(inputLongOne, inputLongTwo, inputProperty);
-//                    System.out.println("farts");
+                }
+            } else if (inputArray.length == 4) { // need to add validation here
+                Long inputLongOne = Long.parseLong(inputArray[0]);
+                Long inputLongTwo = Long.parseLong(inputArray[1]);
+                String inputPropertyOne = inputArray[2].toLowerCase();
+                String inputPropertyTwo = inputArray[3].toLowerCase();
+                if (!isANaturalNumber(inputLongOne)) {
+                    System.out.println(ERROR_OUTPUT_1);
+                } else if (!isANaturalNumber(inputLongTwo)) {
+                    System.out.println(ERROR_OUTPUT_2);
+                } else if (!isValidProperty(inputPropertyOne) && !isValidProperty(inputPropertyTwo)) {
+                    System.out.printf(ERROR_OUTPUT_4, inputPropertyOne, inputPropertyTwo);
+                    System.out.println(ERROR_OUTPUT_5);
+                } else if (!isValidProperty(inputPropertyOne)) {
+                    System.out.printf(ERROR_OUTPUT_3, inputPropertyOne);
+                    System.out.println(ERROR_OUTPUT_5);
+                } else if (!isValidProperty(inputPropertyTwo)) {
+                    System.out.printf(ERROR_OUTPUT_3, inputPropertyTwo);
+                    System.out.println(ERROR_OUTPUT_5);
+                } else if (inputPropertyOne.equals(EVEN) && inputPropertyTwo.equals(ODD) || inputPropertyOne.equals(ODD) && inputPropertyTwo.equals(EVEN)) { // Even and Odd
+                    System.out.printf(ERROR_OUTPUT_6, inputPropertyOne, inputPropertyTwo);
+                    System.out.println(ERROR_OUTPUT_7);
+                } else if (inputPropertyOne.equals(DUCK) && inputPropertyTwo.equals(SPY) || inputPropertyOne.equals(SPY) && inputPropertyTwo.equals(DUCK)) { // Duck and Spy
+                    System.out.printf(ERROR_OUTPUT_6, inputPropertyOne, inputPropertyTwo);
+                    System.out.println(ERROR_OUTPUT_7);
+                } else if (inputPropertyOne.equals(SUNNY) && inputPropertyTwo.equals(SQUARE) || inputPropertyOne.equals(SQUARE) && inputPropertyTwo.equals(SUNNY)) { // Sunny and Square
+                    System.out.printf(ERROR_OUTPUT_6, inputPropertyOne, inputPropertyTwo);
+                    System.out.println(ERROR_OUTPUT_7);
+                } else {
+                    outputWithTwoSearchProperties(inputLongOne, inputLongTwo, inputPropertyOne, inputPropertyTwo);
                 }
             }
         }
@@ -340,4 +396,113 @@ public class Main {
 //
 //    public static void tripleInputValidation() {
 //
+//    }
+
+// copied before updating:
+//    public static void outputWithSearchProperty(long input, long reps, String property) {
+//        int count = 0;
+//        for (long i = input; count < reps; i++) {
+//            switch (property) {
+//                case EVEN: if(isEven(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case ODD: if(!isEven(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case BUZZ: if(isBuzz(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case DUCK: if(isDuck(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case PALINDROME: if(isPalindrome(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case GAPFUL: if(isGapful(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SPY: if(isSpy(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SUNNY: if(isSunny(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SQUARE: if(isSquare(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//            }
+//        }
+//        System.out.println();
+//    }
+
+//        public static void outputWithSearchProperty(long input, long reps, String property) {
+//        int count = 0;
+//        for (long i = input; count < reps; i++) {
+//            switch (property) {
+//                case EVEN: if(isEven(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case ODD: if(!isEven(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case BUZZ: if(isBuzz(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case DUCK: if(isDuck(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case PALINDROME: if(isPalindrome(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case GAPFUL: if(isGapful(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SPY: if(isSpy(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SUNNY: if(isSunny(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//                case SQUARE: if(isSquare(i)) {
+//                    outputSingleOfMultiple(i);
+//                    count++;
+//                }
+//                    break;
+//            }
+//        }
+//        System.out.println();
 //    }
